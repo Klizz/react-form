@@ -11,49 +11,42 @@ const INITIAL_STATE = [
 ];
 
 class FormContainer extends Component {
-  constructor() {
-    super();
-    this.state = {
+state = {
       newUser: {
         name: "",
         age: ""
       },
       userSaved: INITIAL_STATE
-    };
-    this.handleName = this.handleName.bind(this);
-    this.handleAge = this.handleAge.bind(this);
-    this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.handleClearForm = this.handleClearForm.bind(this);
   }
 
-  handleName(e) {
+  componentDidMount() {
+    const url = 'https://jsonplaceholder.typicode.com/users';
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      this.setState({
+        userSaved: data
+      })
+    })
+  }
+
+  handleInput = (e) => {
     let value = e.target.value;
+    let name = e.target.name;
+    let age = e.target.age
     this.setState(
-      // Mandar nuevo objeto a actualizar
       prevState => ({
         newUser: {
-          // Deestructuracion para evitar perder los datos
           ...prevState.newUser,
-          name: value
+          [name]: value,
+          [age]: value
         }
       })
     );
   }
 
-  handleAge(e) {
-    let value = e.target.value;
-    this.setState(
-      // Mandar nuevo objeto a actualizar
-      prevState => ({
-        newUser: {
-          ...prevState.newUser,
-          age: value
-        }
-      })
-    );
-  }
-
-  handleFormSubmit(e) {
+  handleFormSubmit = (e) => {
     e.preventDefault();
     let userData = this.state.newUser;
     this.setState(prevState => ({
@@ -65,7 +58,7 @@ class FormContainer extends Component {
     }));
   }
 
-  handleClearForm(e) {
+  handleClearForm = (e) => {
     e.preventDefault();
     this.setState({
       newUser: {
@@ -86,15 +79,15 @@ class FormContainer extends Component {
             type="text"
             value={this.state.newUser.name}
             placeholder="Ingresa tu nombre"
-            handleChange={this.handleName}
+            handleChange={this.handleInput}
           />
           <Input
             className="form"
-            name="Age"
+            name="age"
             type="number"
             value={this.state.newUser.age}
             placeholder="Ingresa tu edad"
-            handleChange={this.handleAge}
+            handleChange={this.handleInput}
           />
           <Button action={this.handleFormSubmit} title="Enviar" />
           <Button action={this.handleClearForm} title="Borrar todo" />
